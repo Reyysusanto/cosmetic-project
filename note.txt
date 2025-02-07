@@ -2,6 +2,7 @@ php artisan make:model Category -m
 php artisan make:model Brand -m
 php artisan make:model Cosmetic -m
 php artisan make:model CosmeticBenefit -m
+php artisan make:model CosmeticPhoto -m
 php artisan make:model CosmeticTestimonial -m
 php artisan make:model BookingTransaction -m
 php artisan make:model TransactionDetail -m
