@@ -6,3 +6,8 @@ php artisan make:model CosmeticPhoto -m
 php artisan make:model CosmeticTestimonial -m
 php artisan make:model BookingTransaction -m
 php artisan make:model TransactionDetail -m
+
+php artisan make:filament-resource Category --soft-deletes
+php artisan make:filament-resource Brand --soft-deletes
+php artisan make:filament-resource Cosmetic --soft-deletes
+php artisan make:filament-resource BookingTransaction --soft-deletes
