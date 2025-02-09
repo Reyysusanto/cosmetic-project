@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\BookingTransactionResource\Pages;
 use App\Filament\Resources\BookingTransactionResource\RelationManagers;
+use Filament\Forms\Components\ToggleButtons;
 
 class BookingTransactionResource extends Resource
 {
@@ -93,7 +94,76 @@ class BookingTransactionResource extends Resource
                             ->label('Total Tax (11%)')
                             ->readOnly(),
                         ])
-                    ])
+                    ]),
+
+                    Forms\Components\Wizard\Step::make('Customer Information')
+                    ->completedIcon('heroicon-m-hand-thumb-up')
+                    ->description('For our marketing')
+                    ->schema([
+
+                        Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255),
+
+                            Forms\Components\TextInput::make('phone')
+                            ->required()
+                            ->maxLength(16),
+
+                            Forms\Components\TextInput::make('email')
+                            ->required()
+                            ->maxLength(255),
+                        ])
+                    ]),
+                    
+                    Forms\Components\Wizard\Step::make('Delivery Information')
+                    ->completedIcon('heroicon-m-hand-thumb-up')
+                    ->description('Put your correct address')
+                    ->schema([
+
+                        Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('city')
+                            ->required()
+                            ->maxLength(255),
+
+                            Forms\Components\TextInput::make('postal_code')
+                            ->required()
+                            ->maxLength(10),
+
+                            Forms\Components\TextInput::make('address')
+                            ->required()
+                            ->maxLength(255),
+                        ])
+                    ]),
+
+                    Forms\Components\Wizard\Step::make('Payment Information')
+                    ->completedIcon('heroicon-m-hand-thumb-up')
+                    ->description('Review your payment')
+                    ->schema([
+
+                        Grid::make(2)
+                        ->schema([
+                            Forms\Components\TextInput::make('booking_trx_id')
+                            ->maxLength(255)
+                            ->required(),
+
+                            ToggleButtons::make('is_paid')
+                            ->label('Have paid?')
+                            ->boolean()
+                            ->grouped()
+                            ->icons([
+                                true => 'heroicon-o-pencil',
+                                false => 'heroicon-o-clock',
+                            ])
+                            ->required(),
+
+                            Forms\Components\FileUpload::make('proof')
+                            ->required()
+                            ->image(),
+                        ])
+                    ]),
                 ])
                 ->columnSpan('full')
                 ->columns(1)
