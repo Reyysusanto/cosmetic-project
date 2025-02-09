@@ -4,6 +4,8 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use Filament\Tables;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use App\Models\Cosmetic;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
@@ -11,16 +13,42 @@ use Filament\Resources\Resource;
 use App\Models\BookingTransaction;
 use Filament\Forms\Components\Grid;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\ToggleButtons;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\BookingTransactionResource\Pages;
 use App\Filament\Resources\BookingTransactionResource\RelationManagers;
-use Filament\Forms\Components\ToggleButtons;
 
 class BookingTransactionResource extends Resource
 {
     protected static ?string $model = BookingTransaction::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function updateTotals(Get $get, Set $set): void
+    {
+        $selectedCosmetics = collect($get('transactionDetails'))->filter(fn($item)
+        =>!empty($item['cosmetic_id']) && !empty($item['quantity']));
+
+        $prices = Cosmetic::find($selectedCosmetics->pluck('cosmetic_id'))->pluck('price', 'id');
+
+        $subtotal = $selectedCosmetics->reduce(function ($subtotal, $item) use ($prices) {
+            return $subtotal + ($prices[$item['cosmetic_id']] * $item['quantity']);
+        }, 0);
+
+        $total_tax_amount = round($subtotal * 0.11);
+
+        $total_amount = round($subtotal + $total_tax_amount);
+        
+        $total_quantity = $selectedCosmetics->sum('quantity');
+
+        $set('total_amount', number_format($total_amount, 0, '.', ''));
+
+        $set('total_tax_amount', number_format($total_tax_amount, 0, '.', ''));
+
+        $set('sub_total_amount', number_format($subtotal, 0, '.', ''));
+
+        $set('quantity', $total_quantity);
+    }
 
     public static function form(Form $form): Form
     {
@@ -63,6 +91,10 @@ class BookingTransactionResource extends Resource
                                 ->default(1)
                                 ->required(),
                             ])
+                            ->live()
+                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                self::updateTotals($get, $set);
+                            })
                             ->minItems(1)
                             ->columnSpan('full')
                             ->label('Choose Products')
@@ -128,7 +160,7 @@ class BookingTransactionResource extends Resource
                             ->required()
                             ->maxLength(255),
 
-                            Forms\Components\TextInput::make('postal_code')
+                            Forms\Components\TextInput::make('post_code')
                             ->required()
                             ->maxLength(10),
 
@@ -175,12 +207,27 @@ class BookingTransactionResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name')
+                ->searchable(),
+
+                Tables\Columns\TextColumn::make('booking_trx_id')
+                ->searchable(),
+
+                Tables\Columns\TextColumn::make('created_at'),
+
+                Tables\Columns\IconColumn::make('is_paid')
+                ->boolean()
+                ->trueColor('success')
+                ->falseColor('danger')
+                ->trueIcon('heroicon-o-check-circle')
+                ->falseIcon('heroicon-o-x-circle')
+                ->label('Verified')
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
+                Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
