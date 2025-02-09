@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\CosmeticResource\Pages;
 use App\Filament\Resources\CosmeticResource\RelationManagers;
+use App\Filament\Resources\CosmeticResource\RelationManagers\TestimonialsRelationManager;
 use App\Models\Cosmetic;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -135,7 +136,7 @@ class CosmeticResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TestimonialsRelationManager::class,
         ];
     }
 
