@@ -13,3 +13,13 @@ php artisan make:filament-resource Cosmetic --soft-deletes
 php artisan make:filament-resource BookingTransaction --soft-deletes
 
 php artisan make:filament-relation-manager CosmeticResource testimonials name
+
+php artisan make:resource Api/CategoryApiResource
+php artisan make:resource Api/BrandApiResource
+php artisan make:resource Api/CosmeticApiResource
+php artisan make:resource Api/BookingTransactionApiResource
+
+php artisan make:controller Api/CategoryController
+php artisan make:controller Api/BrandController
+php artisan make:controller Api/CosmeticController
+php artisan make:controller Api/BookingTransactionController

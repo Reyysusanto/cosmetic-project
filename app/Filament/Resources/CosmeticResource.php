@@ -103,7 +103,7 @@ class CosmeticResource extends Resource
 
                 Tables\Columns\IconColumn::make('is_popular')
                 ->boolean()
-                ->trueColor('succes')
+                ->trueColor('success')
                 ->falsecolor('danger')
                 ->trueIcon('heroicon-o-check-circle')
                 ->falseIcon('heroicon-o-x-circle')
