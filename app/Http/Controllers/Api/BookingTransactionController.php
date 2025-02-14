@@ -40,7 +40,7 @@ class BookingTransactionController extends Controller
 
             $validatedData['total_amount'] = $grandPrice;
             $validatedData['total_tax_amount'] = $tax;
-            $validatedData['total_price'] = $totalPrice;
+            $validatedData['sub_total_amount'] = $totalPrice;
             $validatedData['is_paid'] = false;
             $validatedData['booking_trx_id'] = BookingTransaction::generateUniqueId();
             $validatedData['quantity'] = $totalQuantity;
@@ -56,7 +56,7 @@ class BookingTransactionController extends Controller
                 ]);
             }
 
-            return new BookingTransactionApiResource($bookingTransaction->load('transactionDetails'));
+            return new BookingTransactionApiResource($bookingTransaction->load(['transactionDetails', 'transactionDetails.cosmetic']));
 
         } catch(\Exception $err){
             return response()->json(['message' => 'An error occurred', 'error' => $err->getMessage()], 500);

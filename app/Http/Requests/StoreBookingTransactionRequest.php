@@ -32,7 +32,7 @@ class StoreBookingTransactionRequest extends FormRequest
             'proof' => 'required|file|mimes:png,jpg,jpeg|max:2048',
 
             'cosmetic_ids' => 'required|array',
-            'cosmetic_ids.*.id' => 'required|integer|exists:cosmetics, id',
+            'cosmetic_ids.*.id' => 'required|integer|exists:cosmetics,id',
             'cosmetic_ids.*.quantity' => 'required|integer|min:1',
         ];
     }
